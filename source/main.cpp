@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include "sockets/UDPSocket.h"
-#include "EthernetInterface.h"
 #include "test_env.h"
 #include "mbed-client/m2minterfacefactory.h"
 #include "mbed-client/m2mdevice.h"
@@ -26,7 +25,7 @@
 #include "security.h"
 #include "ns_trace.h"
 
-#include "lwipv4_init.h"
+#include "sal-espressif-esp8266/esp8266.h"
 
 using namespace mbed::util;
 
@@ -96,7 +95,7 @@ public:
                                                   port,
                                                   MBED_USER_NAME_DOMAIN,
                                                   SOCKET_MODE,
-                                                  M2MInterface::LwIP_IPv4,
+                                                  M2MInterface::ESP8266,
                                                   "");
     }
 
@@ -299,7 +298,6 @@ private:
     int                 _value;
 };
 
-EthernetInterface eth;
 // Instantiate the class which implements
 // LWM2M Client API
 MbedClient mbed_client;
@@ -315,19 +313,15 @@ void app_start(int /*argc*/, char* /*argv*/[]) {
 
     // This sets up the network interface configuration which will be used
     // by LWM2M Client API to communicate with mbed Device server.
-    eth.init(); //Use DHCP
-    if (eth.connect() == 0) {
-        output.printf("Connected!\r\n");
-        }
-    else {
-        output.printf("Failed to form a connection!\r\n");
+    if (esp8266::init(D1, D0, true) != 0) {
+        output.printf("Error on esp8266::init!\r\n");
     }
 
-    if (lwipv4_socket_init() != 0) {
-        output.printf("Error on lwipv4_socket_init!\r\n");
+    if (esp8266::connect("Sniffer", "Sandcastle")) {
+        output.printf("Error on esp8266::connect\r\n");
     }
 
-    output.printf("IP address is %s\r\n", eth.getIPAddress());
+// TODO    output.printf("IP address is %s\r\n", eth.getIPAddress());
     output.printf("Device name %s\r\n", MBED_ENDPOINT_NAME);
 
     // On press of SW3 button on K64F board, example application
