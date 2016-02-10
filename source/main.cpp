@@ -321,7 +321,7 @@ void app_start(int /*argc*/, char* /*argv*/[]) {
 
     // This sets up the network interface configuration which will be used
     // by LWM2M Client API to communicate with mbed Device server.
-    if (esp8266::init(D1, D0, true) != 0) {
+    if (esp8266::init(D1, D0) != 0) {
         output.printf("Error on esp8266::init!\r\n");
     }
 
