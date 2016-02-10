@@ -22,6 +22,7 @@
 #include "mbed-client/m2mobjectinstance.h"
 #include "mbed-client/m2mresource.h"
 #include "minar/minar.h"
+#include "minar-events/minar-events.h"
 #include "security.h"
 #include "ns_trace.h"
 
@@ -304,16 +305,9 @@ private:
 MbedClient mbed_client;
 
 // Set up Hardware interrupt button.
-InterruptIn obs_button(OBS_BUTTON);
-InterruptIn unreg_button(UNREG_BUTTON);
-
-void obs_handler() {
-    minar::Scheduler::postCallback(&mbed_client, &MbedClient::update_resource);
-}
-
-void unreg_handler() {
-    minar::Scheduler::postCallback(&mbed_client, &MbedClient::test_unregister);
-}
+minar::events::InterruptIn obs_button(OBS_BUTTON);
+minar::events::InterruptIn unreg_button(UNREG_BUTTON);
+minar::events::Ticker update_ticker;
 
 void app_start(int /*argc*/, char* /*argv*/[]) {
     trace_init();
@@ -336,11 +330,11 @@ void app_start(int /*argc*/, char* /*argv*/[]) {
 
     // On press of SW3 button on K64F board, example application
     // will call unregister API towards mbed Device Server
-    unreg_button.fall(unreg_handler);
+    unreg_button.fall(&mbed_client, &MbedClient::test_unregister);
 
     // On press of SW2 button on K64F board, example application
     // will send observation towards mbed Device Server
-    obs_button.fall(obs_handler);
+    obs_button.fall(&mbed_client, &MbedClient::update_resource);
 
     // Create LWM2M Client API interface to manage register and unregister
     mbed_client.create_interface();
@@ -365,8 +359,8 @@ void app_start(int /*argc*/, char* /*argv*/[]) {
     mbed_client.set_register_object(register_object);
 
     // Issue register command.
-    FunctionPointer2<void, M2MSecurity*, M2MObjectList> fp(&mbed_client, &MbedClient::test_register);
-    minar::Scheduler::postCallback(fp.bind(register_object,object_list));
-    minar::Scheduler::postCallback(&mbed_client,&MbedClient::test_update_register).period(minar::milliseconds(25000));
+    mbed_client.test_register(register_object, object_list);
+
+    update_ticker.attach(&mbed_client, &MbedClient::test_update_register, 25);
 }
 

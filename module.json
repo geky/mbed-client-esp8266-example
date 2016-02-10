@@ -10,7 +10,8 @@
   "extraIncludes": [],
   "dependencies": {
     "mbed-client": "^1.0.0",
-    "sal-espressif-esp8266": "^1.0.0"
+    "sal-espressif-esp8266": "^1.0.0",
+    "minar-events": "~0.0.0"
   },
   "targetDependencies": {},
   "bin": "./source/"
