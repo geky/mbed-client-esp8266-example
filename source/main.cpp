@@ -329,7 +329,8 @@ void app_start(int /*argc*/, char* /*argv*/[]) {
         output.printf("Error on esp8266::connect\r\n");
     }
 
-// TODO    output.printf("IP address is %s\r\n", eth.getIPAddress());
+    output.printf("MAC address is %s\r\n", esp8266::getMACAddress());
+    output.printf("IP address is %s\r\n", esp8266::getIPAddress());
     output.printf("Device name %s\r\n", MBED_ENDPOINT_NAME);
 
     // On press of SW3 button on K64F board, example application
