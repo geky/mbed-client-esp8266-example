@@ -306,6 +306,14 @@ MbedClient mbed_client;
 InterruptIn obs_button(OBS_BUTTON);
 InterruptIn unreg_button(UNREG_BUTTON);
 
+void obs_handler() {
+    minar::Scheduler::postCallback(&mbed_client, &MbedClient::update_resource);
+}
+
+void unreg_handler() {
+    minar::Scheduler::postCallback(&mbed_client, &MbedClient::test_unregister);
+}
+
 void app_start(int /*argc*/, char* /*argv*/[]) {
     trace_init();
     //Sets the console baud-rate
@@ -326,11 +334,11 @@ void app_start(int /*argc*/, char* /*argv*/[]) {
 
     // On press of SW3 button on K64F board, example application
     // will call unregister API towards mbed Device Server
-    unreg_button.fall(&mbed_client,&MbedClient::test_unregister);
+    unreg_button.fall(unreg_handler);
 
     // On press of SW2 button on K64F board, example application
     // will send observation towards mbed Device Server
-    obs_button.fall(&mbed_client,&MbedClient::update_resource);
+    obs_button.fall(obs_handler);
 
     // Create LWM2M Client API interface to manage register and unregister
     mbed_client.create_interface();
