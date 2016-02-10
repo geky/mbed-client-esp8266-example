@@ -326,7 +326,7 @@ void app_start(int /*argc*/, char* /*argv*/[]) {
         output.printf("Error on esp8266::init!\r\n");
     }
 
-    if (esp8266::connect("Sniffer", "Sandcastle")) {
+    if (esp8266::connect("Wifi", "Password")) {
         output.printf("Error on esp8266::connect\r\n");
     }
 
