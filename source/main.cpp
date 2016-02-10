@@ -35,7 +35,8 @@ Serial &output = get_stdio_serial();
 M2MInterface::BindingMode SOCKET_MODE = M2MInterface::UDP;
 
 // This is address to mbed Device Connector
-const String &MBED_SERVER_ADDRESS = "coap://api.connector.mbed.com:5684";
+const String &MBED_SERVER_ADDRESS = "coap://169.45.82.18:5684";
+//const String &MBED_SERVER_ADDRESS = "coap://api.connector.mbed.com:5684";
 
 const String &MBED_USER_NAME_DOMAIN = MBED_DOMAIN;
 const String &ENDPOINT_NAME = MBED_ENDPOINT_NAME;
